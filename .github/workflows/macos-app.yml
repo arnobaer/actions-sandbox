@@ -4,8 +4,7 @@ on: push
 
 jobs:
   build:
-    name: Say hi
-    runs-on: macos-10.13
+    runs-on: macos-10.14
     steps:
       - name: Check-out the repo under $GITHUB_WORKSPACE
         uses: actions/checkout@v2
