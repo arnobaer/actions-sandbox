@@ -1,6 +1,4 @@
-name: First Workflow
-
-on: commit
+name: MacOS app
 
 jobs:
   build:
