@@ -9,7 +9,72 @@ jobs:
       - name: Check-out the repo under $GITHUB_WORKSPACE
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.6
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.6'
+
+      - name: Install build tools
+        run:
+          - brew install boost swig xerces-c
+          - pip install -U pip
+          - pip install wheel pyinstaller PyQt5 Markdown
+
+      - name: Build utm 0.8.1
+        run:
+          - git clone https://gitlab.cern.ch/cms-l1t-utm/utm.git
+          - cd utm
+          - git checkout master
+          - make all CPPFLAGS='-DSWIG -DNDEBUG'
+          - source setup.sh
+          - cd ..  
+
+      - name: Build tm-grammar
+        run:
+          - git clone https://github.com/cms-l1-globaltrigger/tm-grammar.git
+          - cd tm-grammar
+          - git checkout 0.8.1
+          - python setup.py bdist_wheel
+          - pip install dist/*.whl
+          - cd ..
+            
+      - name: Build tm-table
+        run:
+          - git clone https://github.com/cms-l1-globaltrigger/tm-table.git
+          - cd tm-table
+          - git checkout 0.8.1
+          - python setup.py bdist_wheel
+          - pip install dist/*.whl
+          - cd ..
+
+      - name: Build tm-eventsetup
+        run:
+          - git clone https://github.com/cms-l1-globaltrigger/tm-eventsetup.git
+          - cd tm-eventsetup
+          - git checkout 0.8.1
+          - python setup.py bdist_wheel
+          - pip install dist/*.whl
+          - cd ..
+            
+      - name: Build tm-python
+        run:
+          - git clone https://github.com/cms-l1-globaltrigger/tm-python.git
+          - cd tm-python
+          - git checkout 0.8.1
+          - python setup.py install
+          - cd ..
+            
+      - name: Build tm-editor
+        run:
+          - git clone https://github.com/cms-l1-globaltrigger/tm-editor.git
+          - cd tm-editor
+          - git checkout macos
+          - echo "UTM_ROOT=$UTM_ROOT"
+          - echo "UTM_XSD_DIR=$UTM_XSD_DIR"
+          - python -m PyInstaller macos_app.spec
+          - cd ..
+            
+      - uses: actions/upload-artifact@v2
+        with:
+          name: tm-editor.app
+          path: tm-editor/dist/tm-editor.app
