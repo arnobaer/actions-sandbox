@@ -27,52 +27,51 @@ jobs:
           git checkout master
           make all CPPFLAGS='-DSWIG -DNDEBUG'
           source setup.sh
-          cd ..  
 
       - name: Build tm-grammar
         run: |
+          source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-grammar.git
           cd tm-grammar
           git checkout 0.8.1
           python setup.py bdist_wheel
           pip install dist/*.whl
-          cd ..
             
       - name: Build tm-table
         run: |
+          source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-table.git
           cd tm-table
           git checkout 0.8.1
           python setup.py bdist_wheel
           pip install dist/*.whl
-          cd ..
 
       - name: Build tm-eventsetup
         run: |
+          source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-eventsetup.git
           cd tm-eventsetup
           git checkout 0.8.1
           python setup.py bdist_wheel
           pip install dist/*.whl
-          cd ..
             
       - name: Build tm-python
         run: |
+          source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-python.git
           cd tm-python
           git checkout 0.8.1
           python setup.py install
-          cd ..
             
       - name: Build tm-editor
         run: |
+          source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-editor.git
           cd tm-editor
           git checkout macos
           echo "UTM_ROOT=$UTM_ROOT"
           echo "UTM_XSD_DIR=$UTM_XSD_DIR"
           python -m PyInstaller macos_app.spec
-          cd ..
             
       - uses: actions/upload-artifact@v2
         with:
