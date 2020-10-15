@@ -1,6 +1,9 @@
 name: MacOS app
 
 on: push
+env:
+  UTM_VERSION: 0.8.1
+  TME_VERSION: 0.12.x
 
 jobs:
   build:
@@ -20,20 +23,20 @@ jobs:
           pip install -U pip
           pip install wheel pyinstaller PyQt5 Markdown
 
-      - name: Build utm 0.8.1
+      - name: Build utm ${UTM_VERSION}
         run: |
           git clone https://gitlab.cern.ch/cms-l1t-utm/utm.git
           cd utm
+          # git checkout ${UTM_VERSION}
           git checkout master
           make all CPPFLAGS='-DSWIG -DNDEBUG'
-          source setup.sh
 
       - name: Build tm-grammar
         run: |
           source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-grammar.git
           cd tm-grammar
-          git checkout 0.8.1
+          git checkout ${UTM_VERSION}
           python setup.py bdist_wheel
           pip install dist/*.whl
             
@@ -42,7 +45,7 @@ jobs:
           source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-table.git
           cd tm-table
-          git checkout 0.8.1
+          git checkout ${UTM_VERSION}
           python setup.py bdist_wheel
           pip install dist/*.whl
 
@@ -51,7 +54,7 @@ jobs:
           source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-eventsetup.git
           cd tm-eventsetup
-          git checkout 0.8.1
+          git checkout ${UTM_VERSION}
           python setup.py bdist_wheel
           pip install dist/*.whl
             
@@ -60,7 +63,7 @@ jobs:
           source utm/setup.sh
           git clone https://github.com/cms-l1-globaltrigger/tm-python.git
           cd tm-python
-          git checkout 0.8.1
+          git checkout ${UTM_VERSION}
           python setup.py install
             
       - name: Build tm-editor
@@ -72,8 +75,15 @@ jobs:
           echo "UTM_ROOT=$UTM_ROOT"
           echo "UTM_XSD_DIR=$UTM_XSD_DIR"
           python -m PyInstaller macos_app.spec
-            
+          
+      - name: Build DMG image
+        run: |
+          mkdir -p dmg/tm-editor-${TME_VERSION}
+          mv tm-editor/dist/tm-editor.app dmg/tm-editor-${TME_VERSION}
+          hdiutil create dmg/tmp.dmg -ov -volname "tm-editor-${TME_VERSION}" -fs HFS+ -srcfolder "dmg/tm-editor-${TME_VERSION}/"
+          hdiutil convert dmg/tmp.dmg -format UDZO -o dmg/tm-editor-${TME_VERSION}.dmg
+
       - uses: actions/upload-artifact@v2
         with:
-          name: tm-editor.app
-          path: tm-editor/dist/tm-editor.app
+          name: tm-editor-${TME_VERSION}.dmg
+          path: dmg/tm-editor-${TME_VERSION}.dmg
