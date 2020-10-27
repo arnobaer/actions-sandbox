@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: macos-10.14
     steps:
-      - name: Check-out the repo under ${{GITHUB_WORKSPACE}}
+      - name: Check-out the repo under $GITHUB_WORKSPACE
         uses: actions/checkout@v2
 
       - name: Set up Python 3.8
@@ -23,7 +23,7 @@ jobs:
           pip install -U pip
           pip install wheel pyinstaller PyQt5 Markdown
 
-      - name: Build utm ${{UTM_VERSION}}
+      - name: Build utm $UTM_VERSION
         run: |
           git clone https://gitlab.cern.ch/cms-l1t-utm/utm.git
           cd utm
