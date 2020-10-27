@@ -23,7 +23,7 @@ jobs:
           pip install -U pip
           pip install wheel pyinstaller PyQt5 Markdown
 
-      - name: Build utm $UTM_VERSION
+      - name: Build utm ${{env.UTM_VERSION}}
         run: |
           git clone https://gitlab.cern.ch/cms-l1t-utm/utm.git
           cd utm
@@ -84,5 +84,5 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: tm-editor-${{TME_VERSION}}.dmg
-          path: dmg/tm-editor-${{TME_VERSION}}.dmg
+          name: tm-editor-${{env.TME_VERSION}}.dmg
+          path: dmg/tm-editor-${{env.TME_VERSION}}.dmg
