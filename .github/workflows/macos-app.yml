@@ -3,19 +3,19 @@ name: MacOS app
 on: push
 env:
   UTM_VERSION: 0.8.1
-  TME_VERSION: 0.12.x
+  TME_VERSION: master
 
 jobs:
   build:
     runs-on: macos-10.14
     steps:
-      - name: Check-out the repo under $GITHUB_WORKSPACE
+      - name: Check-out the repo under ${{GITHUB_WORKSPACE}}
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.6
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: '3.6'
+          python-version: '3.8'
 
       - name: Install build tools
         run: |
@@ -23,12 +23,11 @@ jobs:
           pip install -U pip
           pip install wheel pyinstaller PyQt5 Markdown
 
-      - name: Build utm ${UTM_VERSION}
+      - name: Build utm ${{UTM_VERSION}}
         run: |
           git clone https://gitlab.cern.ch/cms-l1t-utm/utm.git
           cd utm
-          # git checkout ${UTM_VERSION}
-          git checkout master
+          git checkout ${UTM_VERSION}
           make all CPPFLAGS='-DSWIG -DNDEBUG'
 
       - name: Build tm-grammar
@@ -74,7 +73,7 @@ jobs:
           git checkout macos
           echo "UTM_ROOT=$UTM_ROOT"
           echo "UTM_XSD_DIR=$UTM_XSD_DIR"
-          python -m PyInstaller macos_app.spec
+          pyinstaller macos_app.spec
           
       - name: Build DMG image
         run: |
@@ -85,5 +84,5 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: tm-editor-${TME_VERSION}.dmg
-          path: dmg/tm-editor-${TME_VERSION}.dmg
+          name: tm-editor-${{TME_VERSION}}.dmg
+          path: dmg/tm-editor-${{TME_VERSION}}.dmg
