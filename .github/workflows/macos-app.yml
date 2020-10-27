@@ -27,7 +27,7 @@ jobs:
         run: |
           git clone https://gitlab.cern.ch/cms-l1t-utm/utm.git
           cd utm
-          git checkout ${UTM_VERSION}
+          git checkout utm_${UTM_VERSION}
           make all CPPFLAGS='-DSWIG -DNDEBUG'
 
       - name: Build tm-grammar
